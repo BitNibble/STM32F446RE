@@ -1,0 +1,25 @@
+NB:
+Just Comment out in "stm32f4xx_it.c", the "void SysTick_Handler(void)" function definition, everything else will work.
+
+After go to Project -> Properties -> C/C++ General -> Paths and Symbols
+then link -> Includes
+          -> Source Location
+
+First enable clock, second configure peripheral, third enable module, fourth setup module.
+
+To generate hex files:
+Project -> Properties -> C/C++ Build -> Settings -> MCU Post build outputs
+then tick the box corresponding "Convert to Intel Hex file"
+
+IDES, are just an abstraction to simplify coding in a logical and coherent manner, making it perceivable for man.
+
+SysTick->LOAD does not accept values below 63 at fixed sysclk.
+
+The RCC is specific to each Arm cpu, and must be specifically taylored.
+
+
+
+
+
+
+

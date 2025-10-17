@@ -1,0 +1,31 @@
+failed to execute MI command
+could not read registers, remote failure reply 'E31'
+
+
+PA13 JTMS-SWDIO
+PA14 JTCK-SWCLK
+PB3 JTD0-SWO
+
+i am using STM32F401RBT6 (LQFP64) and i can't connect ST-LINK/V2 ISOL (FW V2J27S6) to program my board.
+
+i always have 'no target connected'. i tested with SMT32_utility and MDK-ARM.
+
+pin60 boot0 = 0, pin7 NRST = 1, pin46 TMS to ST-LINK/V2 pin7, pin49 TCK to ST-LINK/V2 pin9, pin55 SWO to ST-LINK/V2 pin13, gnd to ST-LINK/V2 pin4 and i tried also 3.3V to ST-LINK/V2 pin1. 
+
+i checked power supply 3.3V on my device (pin 13,19,32,48,64) gnd (pin 12,18,31,47,63). i have capacitor to gnd on pin30. voltage is 1.2V.
+
+Where is my problem? is missing something?
+
+I've had problems like this with a custom board that I made.What i can tell you is that you only need 3 pins at minimum to program your board (considering you short the voltage reference for the st utitility ISOL with its own 3v) GND, SWIO and SWCLK.But the problem in my case was bad wiring,I had made my reprogramming wires too long (try to keep it under 3-3 inches or about 7 centimeters).Also try not to use the classic protoboard wires that you get from china, they are fine for prototyping but not for stable high speed communication.I highly recommend you make good custom wires for this. Don't use solid wire since they aren't very flexible and might break inside if you twist them around too much.Just as a reference I've only used a st-link from a discovery board (with the jumpers off) to reprogram my board.I don't have experience with st utility ISOL but I know some people that have used it and apparently it works fine.Good luck-Andy
+
+VAPP must recieve 3.3 Volt from target in order for programmer to work (ST-LINK/V2).
+
+
+
+
+
+
+
+
+
+
