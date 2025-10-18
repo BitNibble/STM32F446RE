@@ -33,7 +33,7 @@ Date:     18102025
 
 /****************************************/
 /*******   0 -> HSI    1->HSE   *********/
-#define H_Clock_Source 1
+#define H_Clock_Source 0
 /****   PLL ON -> 1    PLL OFF = 0   ****/
 #define PLL_ON_OFF 0
 /****************************************/
