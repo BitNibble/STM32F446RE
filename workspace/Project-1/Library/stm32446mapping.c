@@ -213,7 +213,7 @@ STM32446 STM32446_enable(void){
 	#endif
 
 	/*** System ***/
-	query_enable();
+	//query_enable();
 	rcc_start();
 	systick_start();
 

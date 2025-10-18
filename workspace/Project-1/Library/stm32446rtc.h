@@ -12,7 +12,8 @@ Comment:
 	#define _STM32446RTC_H_
 
 /*** Library ***/
-#include "armquery.h"
+//#include "armquery.h"
+#include "stm32f446re.h"
 
 /*** Define & Macro ***/
 #ifndef RTC_KEY1

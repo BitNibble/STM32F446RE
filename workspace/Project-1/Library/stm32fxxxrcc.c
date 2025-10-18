@@ -48,7 +48,7 @@ void rcc_start(void)
 	STM32FXXXRccHEnable(H_Clock_Source); // 0 - HSI, 1 - HSE
 	STM32FXXXRccPLLSelect(H_Clock_Source); // 0 - HSI, 1 - HSE, H_Clock_Source
 	// M 2 to 63;  N 50 to 432;  P 2,4,6,8;  Q 2 to 15;
-	STM32FXXXPLLDivision((uint32_t)getpllsourceclk()/1000000, 240, 2, 4);
+	STM32FXXXPLLDivision((uint32_t)get_pllsourceclk()/1000000, 240, 2, 4);
 	if(PLL_ON_OFF){
 		STM32FXXXRccPLLCLKEnable();
 		// System Clock Switch

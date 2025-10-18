@@ -13,7 +13,8 @@ Comment:
 	#define _STM32446ADC_H_
 
 /*** Library ***/
-#include "armquery.h"
+//#include "armquery.h"
+#include "stm32f446re.h"
 
 /*** ADC Bit Mapping TypeDef ***/
 // SR

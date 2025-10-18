@@ -11,7 +11,8 @@ Comment:
 #ifndef _STM32446DMA_H_
 	#define _STM32446DMA_H_
 /*** Library ***/
-#include "armquery.h"
+//#include "armquery.h"
+#include "stm32f446re.h"
 /*** DMA Bit Mapping TypeDef ***/
 // SR
 typedef struct

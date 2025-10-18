@@ -11,7 +11,8 @@ Comment:
 #ifndef _STM32446TIM2TO5_H_
 	#define _STM32446TIM2TO5_H_
 /*** Library ***/
-#include "armquery.h"
+//#include "armquery.h"
+#include "stm32f446re.h"
 /*** TIMER 2 to 5 Bit Mapping TypeDef ***/
 // CR1
 typedef struct{

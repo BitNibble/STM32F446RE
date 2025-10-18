@@ -11,7 +11,8 @@ Comment:
 #ifndef _STM32446FLASH_H_
 	#define _STM32446FLASH_H_
 /*** Library ***/
-#include "armquery.h"
+//#include "armquery.h"
+#include "stm32f446re.h"
 #ifndef FLASH_KEY1
 	#define FLASH_KEY1  0x45670123
 #endif

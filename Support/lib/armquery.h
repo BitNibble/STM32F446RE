@@ -121,9 +121,6 @@ uint8_t getpllr(void);
 /*** Tools ***/
 void set_reg(volatile uint32_t* reg, uint32_t hbits);
 void clear_reg(volatile uint32_t* reg, uint32_t hbits);
-uint32_t get_reg_Msk(uint32_t reg, uint32_t Msk, uint8_t Pos);
-void write_reg_Msk(volatile uint32_t* reg, uint32_t Msk, uint8_t Pos, uint32_t data);
-void set_reg_Msk(volatile uint32_t* reg, uint32_t Msk, uint8_t Pos, uint32_t data);
 void set_hpins( GPIO_TypeDef* reg, uint16_t hpins );
 void clear_hpins( GPIO_TypeDef* reg, uint16_t hpins );
 void set_pin( GPIO_TypeDef* reg, uint8_t pin );

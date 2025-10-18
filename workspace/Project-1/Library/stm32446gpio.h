@@ -13,7 +13,8 @@ Comment:
 	#define _STM32446GPIO_H_
 
 /*** File Library ***/
-#include "armquery.h"
+//#include "armquery.h"
+#include "stm32f446re.h"
 
 /*** GPIO TypeDef ***/
 // GPIO -> GPIO

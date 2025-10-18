@@ -11,7 +11,8 @@ Comment:
 #ifndef _STM32FXXXRCC_H_
 	#define _STM32FXXXRCC_H_
 /*** Library ***/
-#include "armquery.h"
+//#include "armquery.h"
+#include "stm32f446re.h"
 
 /*** RCC_Common TypeDef ***/
 // RCC -> PLL

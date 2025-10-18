@@ -11,7 +11,8 @@ Comment:
 #ifndef _STM32446CRC_H_
 	#define _STM32446CRC_H_
 /*** Library ***/
-#include "armquery.h"
+//#include "armquery.h"
+#include "stm32f446re.h"
 /*** CRC TypeDef ***/
 typedef struct
 {
