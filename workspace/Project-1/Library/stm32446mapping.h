@@ -14,9 +14,6 @@ Comment:
 *******************************************************************************/
 #ifndef _STM32446MAPPING_H_
 	#define _STM32446MAPPING_H_
-/***** Global Libraries *****/
-//#include "armquery.h"
-#include "armsystick.h"
 /****** Define & Macros******/
 #ifndef on
 	#define on 1

@@ -82,6 +82,8 @@ void USART1_IRQHandler(void);
 int main(void)
 {
 STM32446_enable();
+rcc_start();
+systick_start();
 rtc()->inic(1); // 1 - LSE 0 - LSI
 
 //tim9_inic();

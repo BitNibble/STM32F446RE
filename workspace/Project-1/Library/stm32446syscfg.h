@@ -12,7 +12,6 @@ Comment:
 	#define _STM32446SYSCFG_H_
 
 /*** File Library ***/
-//#include "armquery.h"
 #include "stm32f446re.h"
 /***************************************/
 /***** SYSCFG Bit Mapping TypeDef ****/

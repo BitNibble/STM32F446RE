@@ -11,7 +11,6 @@ Comment:
 #ifndef _STM32446TIM9TO14_H_
 	#define _STM32446TIM9TO14_H_
 /*** Library ***/
-//#include "armquery.h"
 #include "stm32f446re.h"
 /*** TIMER 9 to 14 Bit Mapping TypeDef ***/
 // CR1 9/12

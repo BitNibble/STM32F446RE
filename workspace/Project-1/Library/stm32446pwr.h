@@ -11,7 +11,6 @@ Comment:
 #ifndef _STM32446PWR_H_
 	#define _STM32446PWR_H_
 /*** Library ***/
-//#include "armquery.h"
 #include "stm32f446re.h"
 /*** PWR Bit Mapping TypeDef ***/
 // CR
