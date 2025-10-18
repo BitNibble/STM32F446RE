@@ -17,8 +17,39 @@ PA9 and PA10 	---> USART1
 #ifndef ARM_MATH_CM4
 	#define ARM_MATH_CM4
 #endif
-
-#include <stm32446mapping.h>
+/****** Define & Macros******/
+#ifndef on
+	#define on 1
+#endif
+#ifndef off
+	#define off 0
+#endif
+#ifndef yes
+	#define yes 1
+#endif
+#ifndef no
+	#define no 0
+#endif
+#ifndef ON
+	#define ON 1
+#endif
+#ifndef OFF
+	#define OFF 0
+#endif
+#ifndef YES
+	#define YES 1
+#endif
+#ifndef NO
+	#define NO 0
+#endif
+/*** Library ***/
+#include "stm32fxxxrcc.h"
+#include "stm32446gpio.h"
+#include "stm32446dma.h"
+#include "stm32446adc1.h"
+#include "stm32446rtc.h"
+#include "stm32446usart.h"
+#include "stm32446tim9to14.h"
 #include <arm_math.h>
 #include "armfunction.h"
 #include "explode.h"
@@ -81,8 +112,17 @@ void USART1_IRQHandler(void);
 /*************************************/
 int main(void)
 {
-STM32446_enable();
+rcc_enable();
 rcc_start();
+rtc_enable();
+gpioa_enable();
+gpiob_enable();
+gpioc_enable();
+usart1_enable();
+adc1_enable();
+tim9_enable();
+dma2_enable();
+
 systick_start();
 rtc()->inic(1); // 1 - LSE 0 - LSI
 
@@ -104,16 +144,16 @@ circ1 = CIRCBUFF_enable(32, buffer1);
 circ2 = CIRCBUFF_enable(32, buffer2);
 
 // FPU full access
-set_reg_block(&stm()->scb_reg->CPACR, 2, 20, 3);
-set_reg_block(&stm()->scb_reg->CPACR, 2, 22, 3);
+set_reg_block(&dev()->core->scb->CPACR, 2, 20, 3);
+set_reg_block(&dev()->core->scb->CPACR, 2, 22, 3);
 
 choice = 3;
 count1 = 0;
 count2 = 0;
 dir = 0;
 
-hc = HC595_enable(&stm()->gpioc_reg->MODER, &stm()->gpioc_reg->ODR, 2, 1, 0);
-lcd = ARMLCD0_enable(GPIOB);
+hc = HC595_enable(&dev()->gpioc->MODER, &dev()->gpioc->ODR, 2, 1, 0);
+lcd = ARMLCD0_enable(dev()->gpiob);
 
 
 circ1.putstr(&circ1.par, "Welcome\r\n");
@@ -125,12 +165,12 @@ for ( zone = 1 ; ass ; zone++)
 
 if(zone == 1){ // Preamble
 	/*** PREAMBLE PREAMBLE COMMON IO ***/
-	PINA.update(&PINA.par, stm()->gpioa_reg->IDR);
-	PINB.update(&PINB.par, stm()->gpiob_reg->IDR);
-	PINC.update(&PINC.par, stm()->gpioc_reg->IDR);
+	PINA.update(&PINA.par, dev()->gpioa->IDR);
+	PINB.update(&PINB.par, dev()->gpiob->IDR);
+	PINC.update(&PINC.par, dev()->gpioc->IDR);
 	lcd.reboot();
 	//lcd.gotoxy(0,4);
-	//lcd.string_size(func()->ui32toa( getsysclk()/gethpre()/1000000 - 1 ),15 );
+	//lcd.string_size(func()->ui32toa( get_sysclk()/get_hpre()/1000000 - 1 ),15 );
 	//lcd.string_size(func()->ui32toa( USART1_IRQn ),15 );
 	//lcd.string_size(func()->ftoa( (double)(40000000/1000000)-1, 4 ),16 );
 	//lcd.string_size(func()->ftoa( (double) 45/560 ,4 ),15);
@@ -179,9 +219,9 @@ if(zone == 4){ // workspace 3 USART1 TX RX
 
 	lcd.gotoxy(1,11);
 	lcd.string_size(received, 9);
-	if( stm()->usart1->sr->tc() ){ // TC: Transmission complete
+	if( usart1()->sr->tc() ){ // TC: Transmission complete
 		transmit = circ1.get(&circ1.par);
-		if(transmit){ stm()->usart1->dr(transmit); for(time_out = 20; (!stm()->usart1->sr->tc()) && time_out; time_out--);}
+		if(transmit){ usart1()->dr(transmit); for(time_out = 20; (!usart1()->sr->tc()) && time_out; time_out--);}
 		}
 		zone = 0;
 	} // if
@@ -198,26 +238,26 @@ void portinic(void)
 	gpiob()->clock(on);
 	gpioc()->clock(on);
   	// PA5 or PB13 is green user led
-	stm()->gpioa->moder(5,1);
-	stm()->gpioa->pupdr(5,0); // 2-pull down 1-pull up 0-non
+	gpioa()->moder(5,1);
+	gpioa()->pupdr(5,0); // 2-pull down 1-pull up 0-non
 	gpioa()->ospeedr(5,3); // 3-100Mhz 2-50Mhz 1-25Mhz 0-2Mhz
 	// PC13 is user button
-	stm()->gpioc->moder(13,0);
-	stm()->gpioc->pupdr(13,1);
+	gpioc()->moder(13,0);
+	gpioc()->pupdr(13,1);
 	/********** USART1 *********/
-	stm()->usart1->clock(on);
+	usart1()->clock(on);
 	usart1()->nvic(on);
 	usart1()->cr1->ue(on);
-	stm()->gpioa->moder(9,2);
-	stm()->gpioa->moder(10,2); // 0-input 1-output 2-Af 3-Analog
-	stm()->gpioa->afr(9,7);
-	stm()->gpioa->afr(10,7);
-	stm()->usart1->parameter(8, 16, 1, 38400);
-	stm()->usart1->cr3->dmat(off);
-	stm()->usart1->cr1->te(on);
-	stm()->usart1->cr3->dmar(off);
-	stm()->usart1->cr1->re(on);
-	stm()->usart1->cr1->rxneie(on);
+	gpioa()->moder(9,2);
+	gpioa()->moder(10,2); // 0-input 1-output 2-Af 3-Analog
+	gpioa()->afr(9,7);
+	gpioa()->afr(10,7);
+	usart1()->parameter(8, 16, 1, 38400);
+	usart1()->cr3->dmat(off);
+	usart1()->cr1->te(on);
+	usart1()->cr3->dmar(off);
+	usart1()->cr1->re(on);
+	usart1()->cr1->rxneie(on);
 	/******* TIMER9 SETUP ******/
 	tim9()->clock(on);
 	// NVIC
@@ -248,7 +288,7 @@ void portinic(void)
 	adc1()->single->temp();
 	adc1()->cr2->eocs(1);
 	adc1()->cr2->dma(1);
-	stm()->adc1->cr2->dds(1);
+	adc1()->cr2->dds(1);
 	adc1()->start();
 	adc1()->cr2->cont(1);
 	adc1()->cr1->scan(1);
@@ -521,13 +561,13 @@ void TIM1_BRK_TIM9_IRQHandler(void)
 		tim9()->sr->clear_uif();
 
 		if(dir){
-			stm()->gpioa->reset(1 << 5);
+			gpioa()->reset(1 << 5);
 
 			hc.byte(&hc.par, (uint8_t)~(1 << count1--));
 			if(count1 < 0)
 				dir = 0;
 		}else{
-			stm()->gpioa->set(1 << 5);
+			gpioa()->set(1 << 5);
 
 			hc.byte(&hc.par, (uint8_t)~(1 << count1++));
 			if(count1 > 7)
@@ -543,8 +583,8 @@ void TIM1_BRK_TIM9_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
 	charcount++;
-	if( stm()->usart1->sr->rxne() ){ // RXNE: Read data register not empty
-		receive = stm()->usart1->get_dr();
+	if( usart1()->sr->rxne() ){ // RXNE: Read data register not empty
+		receive = usart1()->get_dr();
 		if(receive){
 			circ2.put(&circ2.par, receive);
 
@@ -554,7 +594,7 @@ void USART1_IRQHandler(void)
 			}
 		}
 	}
-	if( stm()->usart1->sr->ore() ){ receive = usart1()->get_dr(); }
+	if( usart1()->sr->ore() ){ receive = usart1()->get_dr(); }
 
 }
 /******************************************************************************/

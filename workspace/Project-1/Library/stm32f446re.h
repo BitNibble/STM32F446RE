@@ -19,7 +19,7 @@ Date:     18102025
 #define HSI_RC 16000000UL
 #endif
 #ifndef HSE_OSC
-#define HSE_OSC 25000000UL
+#define HSE_OSC 24000000UL
 #endif
 #ifndef LSI
 #define LSI 32000UL
@@ -190,7 +190,7 @@ typedef struct {
 
 } STM32F446RE_Handler;
 
-STM32F446RE_Handler* stm32f446re(void);
+STM32F446RE_Handler* dev(void);
 
 /*******************************************************************/
 /************************** CLOCK GETTERS **************************/

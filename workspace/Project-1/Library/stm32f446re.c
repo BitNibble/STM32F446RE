@@ -118,7 +118,7 @@ static STM32F446RE_Handler stm32f446re_setup = {
     .usb_otg_hostchannel = ((USB_OTG_HostChannelTypeDef*) USB_OTG_HOST_CHANNEL_BASE)
 };
 
-STM32F446RE_Handler* stm32f446re(void){ return &stm32f446re_setup; }
+STM32F446RE_Handler* dev(void){ return &stm32f446re_setup; }
 
 /*******************************************************************/
 /************************** LOOKUP TABLES **************************/

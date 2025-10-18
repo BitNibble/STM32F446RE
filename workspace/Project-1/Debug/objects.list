@@ -36,7 +36,6 @@
 "./Library/stm32446dma.o"
 "./Library/stm32446flash.o"
 "./Library/stm32446gpio.o"
-"./Library/stm32446mapping.o"
 "./Library/stm32446nvic.o"
 "./Library/stm32446pwr.o"
 "./Library/stm32446rtc.o"
