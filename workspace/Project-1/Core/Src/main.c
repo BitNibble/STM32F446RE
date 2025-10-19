@@ -17,31 +17,6 @@ PA9 and PA10 	---> USART1
 #ifndef ARM_MATH_CM4
 	#define ARM_MATH_CM4
 #endif
-/****** Define & Macros******/
-#ifndef on
-	#define on 1
-#endif
-#ifndef off
-	#define off 0
-#endif
-#ifndef yes
-	#define yes 1
-#endif
-#ifndef no
-	#define no 0
-#endif
-#ifndef ON
-	#define ON 1
-#endif
-#ifndef OFF
-	#define OFF 0
-#endif
-#ifndef YES
-	#define YES 1
-#endif
-#ifndef NO
-	#define NO 0
-#endif
 /*** Library ***/
 #include "stm32fxxxrcc.h"
 #include "stm32446gpio.h"
@@ -234,9 +209,9 @@ if(zone == 4){ // workspace 3 USART1 TX RX
 void portinic(void)
 {
 	//Enable clock for IO peripherals
-	gpioa()->clock(on);
-	gpiob()->clock(on);
-	gpioc()->clock(on);
+	gpioa()->clock(1);
+	gpiob()->clock(1);
+	gpioc()->clock(1);
   	// PA5 or PB13 is green user led
 	gpioa()->moder(5,1);
 	gpioa()->pupdr(5,0); // 2-pull down 1-pull up 0-non
@@ -245,23 +220,23 @@ void portinic(void)
 	gpioc()->moder(13,0);
 	gpioc()->pupdr(13,1);
 	/********** USART1 *********/
-	usart1()->clock(on);
-	usart1()->nvic(on);
-	usart1()->cr1->ue(on);
+	usart1()->clock(1);
+	usart1()->nvic(1);
+	usart1()->cr1->ue(1);
 	gpioa()->moder(9,2);
 	gpioa()->moder(10,2); // 0-input 1-output 2-Af 3-Analog
 	gpioa()->afr(9,7);
 	gpioa()->afr(10,7);
 	usart1()->parameter(8, 16, 1, 38400);
-	usart1()->cr3->dmat(off);
-	usart1()->cr1->te(on);
-	usart1()->cr3->dmar(off);
-	usart1()->cr1->re(on);
-	usart1()->cr1->rxneie(on);
+	usart1()->cr3->dmat(0);
+	usart1()->cr1->te(1);
+	usart1()->cr3->dmar(0);
+	usart1()->cr1->re(1);
+	usart1()->cr1->rxneie(1);
 	/******* TIMER9 SETUP ******/
-	tim9()->clock(on);
+	tim9()->clock(1);
 	// NVIC
-	tim9()->nvic(on);
+	tim9()->nvic(1);
 	// Frequency
 	tim9()->arr(4535);
 	// Compare
@@ -269,16 +244,16 @@ void portinic(void)
 	// pre-scaler
 	tim9()->psc(300);
 	// interrupt
-	tim9()->dier->cc1ie(on);
+	tim9()->dier->cc1ie(1);
 	// Enable (Start/Stop)
-	tim9()->cr1->apre(on);
-	tim9()->cr1->cen(on);
+	tim9()->cr1->apre(1);
+	tim9()->cr1->cen(1);
 	/********** ADC1 ***********/
 	gpioa()->pupdr(0,1);
 	gpioa()->moder(0,3);
 	// ADC Clock
-	adc1()->clock(on); // ADC1EN: ADC1 clock enable
-	adc1()->cr2->adon(off); // ADON: A/D Converter ON / OFF
+	adc1()->clock(1); // ADC1EN: ADC1 clock enable
+	adc1()->cr2->adon(0); // ADON: A/D Converter ON / OFF
 	//adc1()->common->ccr->adcpre(3); // ADCPRE: ADC prescaler, 11: PCLK2 divided by 8
 	adc1()->smpr1->smp18(7); // SMPx[2:0]: Channel x sampling time selection
 	adc1()->smpr2->smp0(7); // SMPx[2:0]: Channel x sampling time selection
@@ -293,7 +268,7 @@ void portinic(void)
 	adc1()->cr2->cont(1);
 	adc1()->cr1->scan(1);
 
-	dma2()->clock(on);
+	dma2()->clock(1);
 	dma2()->func->circ_cfg(&ADC1->DR, (volatile long unsigned int*)temperature, 0, 0, 32, 1, 1, 0, 0);
 	/*********** RTC ***********/
 	rtc()->inic(1); // 0 - LSI, 1 - LSE

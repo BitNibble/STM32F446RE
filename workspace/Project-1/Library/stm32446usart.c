@@ -1,12 +1,9 @@
 /******************************************************************************
 	STM32 446 USART
-Author: Sergio Santos 
-	<sergio.salazar.santos@gmail.com>
+Author: <sergio.salazar.santos@gmail.com>
 License: GNU General Public License
 Hardware: STM32-446
 Date: 19062023
-Comment:
-	
 *******************************************************************************/
 /*** File Library ***/
 #include "stm32446usart.h"
@@ -133,7 +130,7 @@ void STM32446Usart1Parameter( uint8_t wordlength, uint8_t samplingmode, double s
 		USART1->CR2 |= ((1 << 13) | (1 << 12));
 	else if(fabs(stopbits - 2) < 0.00001) // STOP: STOP bits, 10: 2 Stop bits
 		USART1->CR2 |= (1 << 13);
-	value = (double) get_sysclk() / ( get_hpre() * sampling * baudrate );
+	value = (double) get_pclk2() / ( sampling * baudrate );
 	fracpart = modf(value, &intpart);
 	USART1->BRR = 0; // clean slate, reset.
 	if(samplingmode == 16){
@@ -419,7 +416,7 @@ void STM32446Usart2Parameter( uint8_t wordlength, uint8_t samplingmode, double s
 		USART2->CR2 |= ((1 << 13) | (1 << 12));
 	else if(fabs(stopbits - 2) < 0.00001) // STOP: STOP bits, 10: 2 Stop bits
 		USART2->CR2 |= (1 << 13);
-	value = (double) get_sysclk() / ( get_hpre() * sampling * baudrate );
+	value = (double) get_pclk1() / ( sampling * baudrate );
 	fracpart = modf(value, &intpart);
 	USART2->BRR = 0; // clean slate, reset.
 	if(samplingmode == 16){
@@ -704,7 +701,7 @@ void STM32446Usart3Parameter( uint8_t wordlength, uint8_t samplingmode, double s
 		USART3->CR2 |= ((1 << 13) | (1 << 12));
 	else if(fabs(stopbits - 2) < 0.00001) // STOP: STOP bits, 10: 2 Stop bits
 		USART3->CR2 |= (1 << 13);
-	value = (double) get_sysclk() / ( get_hpre() * sampling * baudrate );
+	value = (double) get_pclk1() / ( sampling * baudrate );
 	fracpart = modf(value, &intpart);
 	USART3->BRR = 0; // clean slate, reset.
 	if(samplingmode == 16){
@@ -990,7 +987,7 @@ void STM32446Uart4Parameter( uint8_t wordlength, uint8_t samplingmode, double st
 		UART4->CR2 |= ((1 << 13) | (1 << 12));
 	else if(fabs(stopbits - 2) < 0.00001) // STOP: STOP bits, 10: 2 Stop bits
 		UART4->CR2 |= (1 << 13);
-	value = (double) get_sysclk() / ( get_hpre() * sampling * baudrate );
+	value = (double) get_pclk1() / ( sampling * baudrate );
 	fracpart = modf(value, &intpart);
 	UART4->BRR = 0; // clean slate, reset.
 	if(samplingmode == 16){
@@ -1276,7 +1273,7 @@ void STM32446Uart5Parameter( uint8_t wordlength, uint8_t samplingmode, double st
 		UART5->CR2 |= ((1 << 13) | (1 << 12));
 	else if(fabs(stopbits - 2) < 0.00001) // STOP: STOP bits, 10: 2 Stop bits
 		UART5->CR2 |= (1 << 13);
-	value = (double) get_sysclk() / ( get_hpre() * sampling * baudrate );
+	value = (double) get_pclk1() / ( sampling * baudrate );
 	fracpart = modf(value, &intpart);
 	UART5->BRR = 0; // clean slate, reset.
 	if(samplingmode == 16){
@@ -1561,7 +1558,7 @@ void STM32446Usart6Parameter( uint8_t wordlength, uint8_t samplingmode, double s
 		USART6->CR2 |= ((1 << 13) | (1 << 12));
 	else if(fabs(stopbits - 2) < 0.00001) // STOP: STOP bits, 10: 2 Stop bits
 		USART6->CR2 |= (1 << 13);
-	value = (double) get_sysclk() / ( get_hpre() * sampling * baudrate );
+	value = (double) get_pclk2() / ( sampling * baudrate );
 	fracpart = modf(value, &intpart);
 	USART6->BRR = 0; // clean slate, reset.
 	if(samplingmode == 16){
