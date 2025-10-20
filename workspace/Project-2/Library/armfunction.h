@@ -1,22 +1,22 @@
 /************************************************************************
 	ARMFUNCTION
-Author: Sergio Santos
-	<sergio.salazar.santos@gmail.com>
-License: GNU General Public License
+Author:   <sergio.salazar.santos@gmail.com>
+License:  GNU General Public License
 Hardware: all
-Date: 18062023
-Update: 07012024
+Date:     18062023
+Update:   07012024
 Comment:
 	Tested ->  Atemga128, Atmega328, Atmega32U4, Atmega324, Atmega8535, Atmega88, STM32F446RE
 	Very Stable
 ************************************************************************/
 #ifndef _ARMFUNCTION_H_
 	#define _ARMFUNCTION_H_
+
 /*** Global Library ***/
 #include <inttypes.h>
 #include "armlcd.h"
 /*** Global Define & Macro ***/
-#define FUNCSTRSIZE 31
+#define FUNCSTRSIZE 33
 /*** Typedef ***/
 typedef struct {
     unsigned int Numerator;   // The numerator of the fraction
@@ -30,7 +30,7 @@ typedef struct {
 } RealNum_TypeDef;
 
 typedef struct{
-	void (*dispar4x20)(ARMLCD0* func_lcd);
+	void (*dispar4x20)(ARMLCD0_Handler* func_lcd);
 }ARM_FUNC;
 
 /*** PROCEDURE & FUNCTION TypeDef ***/
@@ -78,14 +78,18 @@ typedef struct
 	int (*pmax)(int a1, int a2);
 	int (*gcd_v1)(uint32_t a, uint32_t b);
 	long (*gcd_v2)(long a, long b);
+	void (*trim_whitespace)(char* str);
+	/******/
+	int (*tokenize_string)(char *input, char *tokens[], int max_tokens, const char *delimiters);
+	void (*nullify_last_n_chars)(char *str, int n);
 	/******/
 	uint32_t (*triggerA)(uint32_t hllh_io, uint8_t pin, uint32_t counter);
 	uint32_t (*triggerB)(uint32_t hl_io, uint32_t lh_io, uint8_t pin, uint32_t counter);
 	uint32_t (*value)(void);
-}FUNC;
+}FUNC_Handler;
 
-FUNC FUNC_enable(void);
-FUNC* func(void);
+FUNC_Handler FUNC_enable(void);
+FUNC_Handler* func(void);
 
 #endif
 

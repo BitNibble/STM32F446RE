@@ -1,44 +1,46 @@
 /*************************************************************************
 	ARMFUNCTION
-Author: Sergio Santos
-	<sergio.salazar.santos@gmail.com> 
-License: GNU General Public License
+Author:   <sergio.salazar.santos@gmail.com>
+License:  GNU General Public License
 Hardware: all
-Date: 18062023
-Update: 07012024
+Date:     18062023
+Update:   07012024
 Comment:
-	Tested ->  Atemga128, Atmega328, Atmega32U4, Atmega324, Atmega8535, Atmega88, STM32F446RE
+	Tested ->  Atemga128, Atmega328, Atmega32U4, Atmega324, Atmega8535, Atmega88, STM32F446RE,
+	STM32F411CEU6.
 	Very Stable
 *************************************************************************/
 /*** File Library ***/
 #include "armfunction.h"
-//#include "armquery.h"
-#include "stm32f446re.h"
 #include "armsystick.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <string.h>
 #include <limits.h>
 #include <stdarg.h>
 #include <math.h>
 
-#define MAX_FUNCSTR_LEN (FUNCSTRSIZE + 1)
 #define SUCCESS 0
 #define ERROR_BUFFER_OVERFLOW 1
 #define ERROR_FORMATTING 2
 #define ERROR_INVALID_BUFFER 3
 
 /*** File Variable ***/
-static FUNC setup_func;
-static ARM_FUNC setup_arm_func;
+static FUNC_Handler func_setup;
+static ARM_FUNC arm_func_setup;
 
-static char FUNCstr[MAX_FUNCSTR_LEN];
+
+static char FUNCstr[FUNCSTRSIZE] = {0};
+const uint32_t funcstrsize = FUNCSTRSIZE - 1;
 static uint32_t mem[4];
 static uint32_t nen[4];
+static char* function_token_default = ":";
 /*** SYSTEM ***/
-void ARMFUNC_ArmParDisplay4x20(ARMLCD0* func_lcd);
+void ARMFUNC_ArmParDisplay4x20(ARMLCD0_Handler* func_lcd);
 
 ARM_FUNC* arm_func_inic(void);
 /*** File Header ***/
@@ -81,9 +83,13 @@ long function_trimmer(long x, long in_min, long in_max, long out_min, long out_m
 int function_pmax(int a1, int a2);
 int function_gcd_v1 (uint32_t a, uint32_t b);
 long function_gcd_v2(long a, long b);
+void function_trim_whitespace(char* str);
 /*** 7 ***/
 int function_StrToInt (const char string[]);
 /*** 8 ***/
+int function_tokenize_string(char *input, char *tokens[], int max_tokens, const char *delimiters);
+void function_nullify_last_n_chars(char *str, int n);
+/*** 9 ***/
 uint32_t function_triggerA(uint32_t hllh_io, uint8_t pin, uint32_t counter);
 uint32_t function_triggerB(uint32_t hl_io, uint32_t lh_io, uint8_t pin, uint32_t counter);
 uint32_t function_read_value(void);
@@ -102,74 +108,77 @@ void int_to_hex_string(unsigned int value, char* buffer, size_t buffer_size);
 void FUNC_var(void);
 
 /*** FUNC Procedure & Function Definition ***/
-FUNC FUNC_enable( void )
+FUNC_Handler FUNC_enable( void )
 {
 	FUNC_var();
 	/*** TOP ***/
-	setup_func.power = function_power;
-	setup_func.divide = function_divide;
-	setup_func.realnumber = function_realnumber;
-	setup_func.stringlength = function_StringLength;
-	setup_func.reverse = function_Reverse;
-	setup_func.swap = function_swap;
+	func_setup.power = function_power;
+	func_setup.divide = function_divide;
+	func_setup.realnumber = function_realnumber;
+	func_setup.stringlength = function_StringLength;
+	func_setup.reverse = function_Reverse;
+	func_setup.swap = function_swap;
 	/***********/
 	// 1
-	setup_func.SwapByte = function_SwapByte;
+	func_setup.SwapByte = function_SwapByte;
 	// 2
-	setup_func.copy = function_copy;
-	setup_func.squeeze = function_squeeze;
-	setup_func.shellsort = function_shellsort;
-	setup_func.resizestr = function_resizestr;
-	setup_func.trim = function_trim;
+	func_setup.copy = function_copy;
+	func_setup.squeeze = function_squeeze;
+	func_setup.shellsort = function_shellsort;
+	func_setup.resizestr = function_resizestr;
+	func_setup.trim = function_trim;
 	// 3
-	setup_func.bcd2dec = function_bcd2dec;
-	setup_func.dec2bcd = function_dec2bcd;
-	setup_func.dectohex = function_dectohex;
-	setup_func.bcd2bin = function_bcd2bin;
-	setup_func.twocomptoint8bit = function_twocomptoint8bit;
-	setup_func.twocomptoint10bit = function_twocomptoint10bit;
-	setup_func.twocomptointnbit = function_twocomptointnbit;
+	func_setup.bcd2dec = function_bcd2dec;
+	func_setup.dec2bcd = function_dec2bcd;
+	func_setup.dectohex = function_dectohex;
+	func_setup.bcd2bin = function_bcd2bin;
+	func_setup.twocomptoint8bit = function_twocomptoint8bit;
+	func_setup.twocomptoint10bit = function_twocomptoint10bit;
+	func_setup.twocomptointnbit = function_twocomptointnbit;
 	// 4
-	setup_func.format_string = function_format_string;
-	setup_func.print_binary = function_print_binary;
+	func_setup.format_string = function_format_string;
+	func_setup.print_binary = function_print_binary;
 	// 5
-	setup_func.i16toa = function_i16toa;
-	setup_func.ui16toa = function_ui16toa;
-	setup_func.i32toa = function_i32toa;
-	setup_func.ui32toa = function_ui32toa;
-	setup_func.ftoa = function_ftoa;
+	func_setup.i16toa = function_i16toa;
+	func_setup.ui16toa = function_ui16toa;
+	func_setup.i32toa = function_i32toa;
+	func_setup.ui32toa = function_ui32toa;
+	func_setup.ftoa = function_ftoa;
 	// 6
-	setup_func.trimmer = function_trimmer;
-	setup_func.pmax = function_pmax;
-	setup_func.gcd_v1 = function_gcd_v1;
-	setup_func.gcd_v2 = function_gcd_v2;
+	func_setup.trimmer = function_trimmer;
+	func_setup.pmax = function_pmax;
+	func_setup.gcd_v1 = function_gcd_v1;
+	func_setup.gcd_v2 = function_gcd_v2;
+	func_setup.trim_whitespace = function_trim_whitespace;
 	// 8
-	setup_func.strToInt = function_StrToInt;
+	func_setup.strToInt = function_StrToInt;
 	// 9
-	setup_func.triggerA = function_triggerA;
-	setup_func.triggerB = function_triggerB;
-	setup_func.value = function_read_value;
+	func_setup.tokenize_string = function_tokenize_string;
+	func_setup.nullify_last_n_chars = function_nullify_last_n_chars;
 	// 10
-	setup_func.arm = arm_func_inic();
+	func_setup.triggerA = function_triggerA;
+	func_setup.triggerB = function_triggerB;
+	func_setup.value = function_read_value;
+	// 11
+	func_setup.arm = arm_func_inic();
 
-	return setup_func;
+	return func_setup;
 }
 
-FUNC* func(void){ return &setup_func; }
+FUNC_Handler* func(void){ return &func_setup; }
 
 void FUNC_var(void)
 {
-	FUNCstr[FUNCSTRSIZE] = '\0';
 	mem[0] = 0; nen[0] = 0;
 }
 ARM_FUNC* arm_func_inic(void)
 {
-	setup_arm_func.dispar4x20 = ARMFUNC_ArmParDisplay4x20;
+	arm_func_setup.dispar4x20 = ARMFUNC_ArmParDisplay4x20;
 
-	return &setup_arm_func;
+	return &arm_func_setup;
 }
 /*** FUNC Procedure & Function Definition***/
-void ARMFUNC_ArmParDisplay4x20(ARMLCD0* func_lcd)
+void ARMFUNC_ArmParDisplay4x20(ARMLCD0_Handler* func_lcd)
 {
 #ifdef STM32F4
 	#ifdef _ARMLCD_H_
@@ -488,17 +497,13 @@ int function_format_string(char *buffer, size_t size, const char *format, ...) {
     va_start(args, format);
 
     // Use vsnprintf to format the string and get the number of characters that would be written
-    int written = vsnprintf(buffer, size, format, args);
+    int written = vsnprintf(buffer, (size - 1), format, args);
 
     va_end(args);
 
     // Check for errors
-    if (written < 0) {
+    if (written < 0)
         return ERROR_FORMATTING; // Formatting error
-    } else if ((size_t)written >= size) {
-        buffer[size - 1] = '\0'; // Ensure null-termination
-        return ERROR_BUFFER_OVERFLOW; // Buffer was too small
-    }
 
     return SUCCESS; // Successful formatting
 }
@@ -641,7 +646,7 @@ char* function_ftoa(double num, unsigned int decimal)
 	}
 	return FUNCstr;
 }
-/******/
+
 long function_trimmer(long x, long in_min, long in_max, long out_min, long out_max) {
     // Check for valid input range to prevent division by zero
     if (in_max == in_min) {
@@ -693,13 +698,13 @@ long function_gcd_v2(long a, long b) {
 
     return b; // Return the GCD
 }
-/******/
+
 int function_StrToInt(const char string[]) {
     int i = 0;
     int result = 0;
     bool isNegative = false;
 
-    // Skip leading whitespaces
+    // Skip leading white spaces
     while (string[i] == ' ') {
         i++;
     }
@@ -727,7 +732,7 @@ int function_StrToInt(const char string[]) {
 
     return isNegative ? -result : result;
 }
-/********************************************************************/
+
 // Function to convert a signed integer to a string
 void int_to_string(int value, char* buffer, size_t buffer_size) {
     if (buffer_size > 0) {
@@ -760,7 +765,44 @@ void float_to_string(float value, char* buffer, size_t buffer_size) {
         snprintf(buffer, buffer_size, "%.2f", value); // Adjust the format as needed
     }
 }
-/******/
+// Function to tokenize a string
+int function_tokenize_string(char *input, char *tokens[], int max_tokens, const char *delimiters) {
+    int count = 0;
+
+    // Get the first token
+    char *token = strtok(input, delimiters);
+
+    // Loop until either max_tokens is reached or no more tokens are found
+    while (count < max_tokens) {
+        if (token != NULL) {
+            tokens[count++] = token; // Store the pointer to the token
+            token = strtok(NULL, delimiters); // Get the next token
+        } else {
+            break; // Exit loop since there are no more tokens
+        }
+    }
+
+    // If we still have space, fill it with default tokens
+    while (count < max_tokens) {
+        tokens[count++] = function_token_default;
+    }
+
+    return count; // Return the number of tokens found
+}
+void function_nullify_last_n_chars(char *str, int n) {
+    int length = strlen(str);
+    if (n < 0) {
+        return;
+    }
+    if (n >= length) {
+        str[0] = 0;  // Nullify the entire string
+    } else {
+        for (int i = 0; i < n; i++) {
+            str[length - 1 - i] = 0;
+        }
+    }
+}
+
 // triggerA
 uint32_t function_triggerA(uint32_t ll_io, uint8_t pin, uint32_t counter)
 {
@@ -816,7 +858,7 @@ uint32_t function_triggerB(uint32_t hl_io, uint32_t lh_io, uint8_t pin, uint32_t
 }
 
 uint32_t function_read_value(void){ return mem[2];}
-/*** Not Used ***/
+
 unsigned int function_mayia(unsigned int xi, unsigned int xf, uint8_t nbits)
 {
 	unsigned int diff;
@@ -834,6 +876,39 @@ uint8_t function_leap_year_check(uint16_t year) {
     else i = 0;
     return i;  // Added return statement
 }
+
+/**
+ * @brief Trim leading and trailing whitespace from a string in-place
+ * @param str The string to trim
+ */
+void function_trim_whitespace(char* str) {
+    if (!str) return;
+
+    // Trim leading whitespace
+    char* start = str;
+    while (*start && isspace((unsigned char)*start)) {
+        start++;
+    }
+
+    // If all spaces, set empty string
+    if (*start == 0) {
+        *str = 0;
+        return;
+    }
+
+    // Trim trailing whitespace
+    char* end = start + strlen(start) - 1;
+    while (end > start && isspace((unsigned char)*end)) {
+        *end = 0;
+        end--;
+    }
+
+    // Shift the trimmed string to the beginning
+    if (start != str) {
+        memmove(str, start, strlen(start) + 1); // +1 to include null terminator
+    }
+}
+
 /***EOF***/
 
 /******

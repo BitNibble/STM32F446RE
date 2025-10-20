@@ -21,6 +21,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stm32fxxxrcc.h"
+#include "stm32fxxxnvic.h"
+#include "stm32fxxxgpio.h"
+#include "stm32fxxxtim1and8.h"
 
 /* USER CODE END Includes */
 
@@ -54,6 +58,9 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void cc1_callback(void){
+	dev()->gpioa->ODR ^= (1 << 5);
+}
 
 /* USER CODE END 0 */
 
@@ -65,6 +72,12 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+	gpioa()->clock(1);
+	gpioa()->moder(5,1);
+	tim1()->clock(1);
+	nvic()->set_enable(TIM1_CC_IRQn);
+	set_reg_Msk(&dev()->tim1->DIER, TIM_DIER_CC1IE_Msk, 1);
+	tim1()->callback->cc1 = cc1_callback;
 
   /* USER CODE END 1 */
 
@@ -87,6 +100,10 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
+  dev()->tim1->PSC = 570;
+  dev()->tim1->ARR = 65535;
+  dev()->tim1->CCR1 = 32767;
+  tim1()->start();
 
   /* USER CODE END 2 */
 

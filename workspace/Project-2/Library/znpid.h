@@ -1,10 +1,9 @@
 /************************************************************************
 	ZNPID
-Author: Sergio Santos
-	<sergio.salazar.santos@gmail.com>
-License: GNU General Public License
+Author:   <sergio.salazar.santos@gmail.com>
+License:  GNU General Public License
 Hardware: Atmega 128
-Date: 17022021_start
+Date:     17022021_start
 Comment:
 
 ************************************************************************/
@@ -13,7 +12,6 @@ Comment:
 
 /*** File Library ***/
 #include <inttypes.h>
-
 /*** File TypeDef ***/
 typedef struct {
 	double c; // constant p
@@ -45,9 +43,9 @@ struct znpid{
 	void (*set_SP)(znpidparameter* par, double setpoint);
 	double (*output)(znpidparameter* par, double PV, double timelapse);
 };
-typedef struct znpid ZNPID;
+typedef struct znpid ZNPID_Handler;
 
-ZNPID ZNPIDenable(void);
+ZNPID_Handler ZNPIDenable(void);
 
 #endif
 

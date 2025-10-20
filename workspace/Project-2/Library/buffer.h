@@ -1,10 +1,9 @@
 /******************************************************************************
 	BUFFER
-Author: Sergio Santos
-	<sergio.salazar.santos@gmail.com>
-License: GNU General Public License
+Author:   <sergio.salazar.santos@gmail.com>
+License:  GNU General Public License
 Hardware: all
-Date: 17112022
+Date:     17112022
 Comment:
 	Circular Buffer
 *******************************************************************************/
@@ -13,10 +12,8 @@ Comment:
 
 /*** File Library ***/
 #include <inttypes.h>
-
 /*** File Constant & Macro ***/
 #define BUFF_var char
-
 /*** File TypeDef ***/
 typedef struct {
 	BUFF_var* orig;
@@ -32,9 +29,9 @@ struct buffer
 	BUFF_var* (*raw)(bufferparameter* par);
 	void (*flush)(bufferparameter* par);
 };
-typedef struct buffer BUFF;
+typedef struct buffer BUFF_Handler;
 
-BUFF BUFF_enable(uint8_t size_buff, BUFF_var* buff);
+BUFF_Handler BUFF_enable(uint8_t size_buff, BUFF_var* buff);
 
 #endif
 

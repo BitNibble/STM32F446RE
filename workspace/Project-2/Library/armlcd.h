@@ -1,10 +1,9 @@
 /************************************************************************
 	ARMLCD
-Author: Sergio Santos 
-   <sergio.salazar.santos@gmail.com>
-License: GNU General Public License
+Author:   <sergio.salazar.santos@gmail.com>
+License:  GNU General Public License
 Hardware: STM32F4
-Date: 12112022
+Date:     12112022
 Comment:
 	STM32F446RE || STM32F411CEU6
 ************************************************************************/
@@ -12,12 +11,11 @@ Comment:
 	#define _ARMLCD_H_
 
 /*** Global Library ***/
-//#include <util/delay.h> // if use AVR ATMEL
-//#include "armquery.h"
-#include "stm32f446re.h"
-#include "armsystick.h"
-#include <inttypes.h>
-
+#if defined (STM32F411xE)
+	#include "stm32f411ceu6.h"
+#elif defined(STM32F446xx)
+	#include "stm32f446re.h"
+#endif
 /*** Global Constant & Macro ***/
 // ASIGN PORT PINS TO LCD (can be setup in any way)
 #ifdef STM32F411xE
@@ -56,10 +54,10 @@ typedef struct
 	void (*clear)(void);
 	void (*gotoxy)(unsigned int y, unsigned int x);
 	void (*reboot)(void);
-}ARMLCD0;
+}ARMLCD0_Handler;
 
-ARMLCD0 ARMLCD0_enable(GPIO_TypeDef* reg);
-ARMLCD0* lcd0(void);
+ARMLCD0_Handler ARMLCD0_enable(GPIO_TypeDef* reg);
+ARMLCD0_Handler* lcd0(void);
 
 #endif
 

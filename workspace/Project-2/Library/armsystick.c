@@ -6,7 +6,11 @@ Hardware: STM32-XXX
 Update:   16012024
 *******************************************************************************/
 #include "armsystick.h"
-#include "stm32f446re.h"
+#if defined (STM32F411xE)
+	#include "stm32f411ceu6.h"
+#elif defined(STM32F446xx)
+	#include "stm32f446re.h"
+#endif
 #include <stdio.h>
 #include <string.h>
 /******/
@@ -95,11 +99,7 @@ void systick_start(void)
 	SysTick->CTRL |= (SYSTICK_TICKINT | SYSTICK_CLKSOURCE);
 	SysTick->CTRL |= SYSTICK_ENABLE;
 }
-/**** Interrupt Callback Handler ****/
-/**
- * Place the below declaration function inside the void SysTick_Handler(void) function definition located at stm32f4xx_it.c,
- * also #include "armsystick.h" header file so it has permissions to its access.
-**/
+/**** Interrupt Handler ****/
 void SysTick_Inc(void)
 {
 	DelayCounter_0++;

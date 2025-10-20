@@ -1,20 +1,18 @@
 /************************************************************************
 	EXPLODE
-Author: Sergio Santos
-	<sergio.salazar.santos@gmail.com>
-License: GNU General Public License
+Author:   <sergio.salazar.santos@gmail.com>
+License:  Free beer
 Hardware: all
-Date: 16032021
+Date:     16032021
 Comment:
 	Tested Atemga128 16Mhz and Atmega328 8Mhz and STM32F446RE
 ************************************************************************/
 #ifndef _EXPLODE_H_
 	#define _EXPLODE_H_
 
-/*** Global Library ***/
+#include <stdint.h>
 #include <inttypes.h>
 
-/*** Global Constant & Macro ***/
 #define STM32F4
 
 #ifdef STM32F4
@@ -23,7 +21,6 @@ Comment:
 	#define IO_var uint8_t
 #endif
 
-/*** Global TypeDef ***/
 typedef struct {
 	IO_var XI;
 	IO_var XF;
@@ -31,20 +28,16 @@ typedef struct {
 	IO_var LL;
 	IO_var LH;
 	IO_var HL;
-}explode_parameter;
+}explode_par;
 
-/*** EXPLODE ***/
 typedef struct {
-	/***Variable***/
-	explode_parameter par;
-	// PROTOTYPES VTABLE
-	void (*update)(explode_parameter* par, IO_var x);
-}EXPLODE;
+	explode_par par;
+	void (*update)(explode_par* par, IO_var x);
+}EXPLODE_Handler;
 
-EXPLODE EXPLODE_enable(void);
+EXPLODE_Handler EXPLODE_enable(void);
 
 #endif
-
 /***EOF***/
 
 /******

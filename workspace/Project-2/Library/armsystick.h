@@ -16,7 +16,6 @@ void delay_Configure(void);
 uint32_t get_systick_us(void);
 uint32_t get_systick_10us(void);
 uint32_t get_systick_ms(void);
-void SysTick_Inc(void);
 void delayMiliseconds(unsigned int ms);
 void delayMicroseconds(unsigned int us);
 void delayAsmMicroseconds(unsigned int us);
@@ -26,7 +25,7 @@ void _delay_10us(uint32_t dez_us);
 void _delay_ms(uint32_t ms);
 void systick_start(void);
 /*****/
-void SysTick_Handler(void);
+void SysTick_Inc(void);
 /*****/
 #endif
 

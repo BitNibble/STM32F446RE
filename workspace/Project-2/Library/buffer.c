@@ -1,17 +1,14 @@
 /******************************************************************************
 	BUFFER
-Author: Sergio Santos
-	<sergio.salazar.santos@gmail.com>
-License: GNU General Public License
+Author:   <sergio.salazar.santos@gmail.com>
+License:  GNU General Public License
 Hardware: all
-Date: 17112022
+Date:     17112022
 Comment:
 	Buffer
 ******************************************************************************/
 /*** File Library ***/
 #include "buffer.h"
-#include <stdio.h>
-#include <string.h>
 
 /*** File Header ***/
 void BUFF_push(bufferparameter* par, BUFF_var data);
@@ -30,10 +27,10 @@ bufferparameter buff_par_inic( uint8_t size_buff, BUFF_var* buff )
 	return buff_par;
 }
 /*** BUFF Procedure & Function Definition ***/
-BUFF BUFF_enable( uint8_t size_buff, BUFF_var* buff )
+BUFF_Handler BUFF_enable( uint8_t size_buff, BUFF_var* buff )
 {
 	// OBJECT STRUCT
-	BUFF ret;
+	BUFF_Handler ret;
 	// inic VAR
 	ret.par = buff_par_inic( size_buff, buff );
 	// function pointers
