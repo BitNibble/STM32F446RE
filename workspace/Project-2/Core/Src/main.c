@@ -25,6 +25,7 @@
 #include "stm32fxxxnvic.h"
 #include "stm32fxxxgpio.h"
 #include "stm32fxxxtim1and8.h"
+#include "explode.h"
 
 /* USER CODE END Includes */
 
@@ -62,6 +63,8 @@ void cc1_callback(void){
 	dev()->gpioa->ODR ^= (1 << 5);
 }
 
+EXPLODE_Handler PC;
+
 /* USER CODE END 0 */
 
 /**
@@ -87,6 +90,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
+  PC = EXPLODE_enable();
 
   /* USER CODE END Init */
 
@@ -100,7 +104,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  dev()->tim1->PSC = 570;
+  dev()->tim1->PSC = 100;
   dev()->tim1->ARR = 65535;
   dev()->tim1->CCR1 = 32767;
   tim1()->start();
@@ -111,6 +115,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  PC.update(&PC.par,dev()->gpioc->IDR);
+
+	  if(PC.par.LH & (1 << 13)) tim1()->start();
+
+	  if(PC.par.HL & (1 << 13)) tim1()->stop();
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
