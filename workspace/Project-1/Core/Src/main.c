@@ -35,7 +35,6 @@ PA9 and PA10 	---> USART1
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <inttypes.h>
 
 #ifndef ass
 	#define ass (1)
