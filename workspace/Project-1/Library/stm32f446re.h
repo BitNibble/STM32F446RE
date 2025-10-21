@@ -8,9 +8,6 @@ Date:     18102025
 #ifndef STM32F446RE_H
 #define STM32F446RE_H
 
-#include <stdint.h>
-#include <inttypes.h>
-#include <stddef.h>
 #include "stm32f4xx.h"
 #include "stm32fxxxtool.h"
 

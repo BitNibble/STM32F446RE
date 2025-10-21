@@ -3,14 +3,11 @@
 Author:   <sergio.salazar.santos@gmail.com>
 License:  GNU General Public License
 Hardware: STM32F446RE
-Date:     18102025
+Date:     21102025
 **********************************************************************/
 #ifndef STM32F446RE_H
 #define STM32F446RE_H
 
-#include <stdint.h>
-#include <inttypes.h>
-#include <stddef.h>
 #include "stm32f4xx.h"
 #include "stm32fxxxtool.h"
 
@@ -207,7 +204,7 @@ uint8_t get_pllp(void);
 uint8_t get_pllq(void);
 uint8_t get_pllr(void); // F446 only
 
-uint32_t get_pllsourceclk(void);
+uint32_t get_pllsclk(void);
 uint32_t get_pllclk(void);
 uint32_t get_sysclk(void);
 uint32_t get_hclk(void);
