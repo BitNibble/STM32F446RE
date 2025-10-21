@@ -1692,7 +1692,6 @@ void dma1_circ_cfg(volatile long unsigned int* p_addr, volatile long unsigned in
 	// Filter to Default
 	if(stream_n > 7){ stream_n = 0;}
 	if(channel_n > 7){ channel_n = 0;}
-	if(quant_d > 65535){ quant_d = 1;}
 	if(p_size > 2){ p_size = 0;}
 	if(m_size > 2){ m_size = 0;}
 	if(priority > 3){ priority = 0;}
@@ -3322,7 +3321,6 @@ void dma2_circ_cfg(volatile long unsigned int* p_addr, volatile long unsigned in
 	// Filter to Default
 	if(stream_n > 7){ stream_n = 0;}
 	if(channel_n > 7){ channel_n = 0;}
-	if(quant_d > 65535){ quant_d = 1;}
 	if(p_size > 2){ p_size = 0;}
 	if(m_size > 2){ m_size = 0;}
 	if(priority > 3){ priority = 0;}

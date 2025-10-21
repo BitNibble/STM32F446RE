@@ -1,20 +1,18 @@
 /* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2025 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+/*****************************************************************************
+Author: Sergio Manuel Santos
+<sergio.salazar.santos@gmail.com>
+License: GNU General Public License
+File: MAIN 12/01/2024
+Software: STM32CubeIDE Version: 1.14.0 Build: 19471_20231121_1200 (UTC)
+Hardware: Nucleo-F446RE
+	Comment:
+PC 0,1,2 		---> 74HC595
+PB 0...7 		---> LCD 4x20
+PA 5     		---> Led indicator
+PC 13    		---> user button
+PA9 and PA10 	---> USART1
+******************************************************************************/
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -26,7 +24,6 @@
 #include "stm32fxxxgpio.h"
 #include "stm32fxxxtim1and8.h"
 #include "explode.h"
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,6 +42,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 
@@ -53,6 +51,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -62,9 +61,7 @@ static void MX_GPIO_Init(void);
 void cc1_callback(void){
 	dev()->gpioa->ODR ^= (1 << 5);
 }
-
 EXPLODE_Handler PC;
-
 /* USER CODE END 0 */
 
 /**
@@ -81,7 +78,6 @@ int main(void)
 	nvic()->set_enable(TIM1_CC_IRQn);
 	set_reg_Msk(&dev()->tim1->DIER, TIM_DIER_CC1IE_Msk, 1);
 	tim1()->callback->cc1 = cc1_callback;
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -90,8 +86,8 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
+  gpioc()->clock(1);
   PC = EXPLODE_enable();
-
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -103,17 +99,17 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   dev()->tim1->PSC = 100;
   dev()->tim1->ARR = 65535;
   dev()->tim1->CCR1 = 32767;
   tim1()->start();
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
+  while(1)
   {
 	  PC.update(&PC.par,dev()->gpioc->IDR);
 
@@ -121,11 +117,8 @@ int main(void)
 
 	  if(PC.par.HL & (1 << 13)) tim1()->stop();
 
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
   }
-  /* USER CODE END 3 */
+  /* USER CODE END WHILE */
 }
 
 /**
@@ -170,6 +163,39 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -181,6 +207,7 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */

@@ -1,6 +1,5 @@
 /*****************************************************************************
-Author: Sergio Manuel Santos
-<sergio.salazar.santos@gmail.com>
+Author: <sergio.salazar.santos@gmail.com>
 License: GNU General Public License
 File: MAIN 12/01/2024
 Software: STM32CubeIDE Version: 1.14.0 Build: 19471_20231121_1200 (UTC)

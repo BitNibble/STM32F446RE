@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (12.3.rel1)
+# Toolchain: GNU Tools for STM32 (13.3.rel1)
 ################################################################################
 
 -include ../makefile.init
@@ -53,6 +53,12 @@ default.size.stdout \
 OBJDUMP_LIST += \
 F446RE-1.list \
 
+OBJCOPY_HEX += \
+F446RE-1.hex \
+
+OBJCOPY_BIN += \
+F446RE-1.bin \
+
 
 # All Target
 all: main-build
@@ -62,7 +68,7 @@ main-build: F446RE-1.elf secondary-outputs
 
 # Tool invocations
 F446RE-1.elf F446RE-1.map: $(OBJS) $(USER_OBJS) D:\Embedded\STM32F446RE\workspace\Project-2\STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "F446RE-1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\Embedded\STM32F446RE\workspace\Project-2\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F446RE-1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "F446RE-1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\Embedded\STM32F446RE\workspace\Project-2\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F446RE-1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -76,12 +82,22 @@ F446RE-1.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+F446RE-1.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "F446RE-1.hex"
+	@echo 'Finished building: $@'
+	@echo ' '
+
+F446RE-1.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "F446RE-1.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) F446RE-1.elf F446RE-1.list F446RE-1.map default.size.stdout
+	-$(RM) F446RE-1.bin F446RE-1.elf F446RE-1.hex F446RE-1.list F446RE-1.map default.size.stdout
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'

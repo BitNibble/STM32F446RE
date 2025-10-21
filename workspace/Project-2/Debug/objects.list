@@ -20,6 +20,7 @@
 "./Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_rcc_ex.o"
 "./Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_tim.o"
 "./Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_tim_ex.o"
+"./Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_uart.o"
 "./Library/74hc595.o"
 "./Library/BT_Commands.o"
 "./Library/armfunction.o"
