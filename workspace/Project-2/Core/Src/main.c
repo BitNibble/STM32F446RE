@@ -6,11 +6,8 @@ File: MAIN 21/10/2025
 Software: STM32CubeIDE Version: 1.14.0 Build: 19471_20231121_1200 (UTC)
 Hardware: Nucleo-F446RE
 	Comment:
-PC 0,1,2 		---> 74HC595
-PB 0...7 		---> LCD 4x20
 PA 5     		---> Led indicator
 PC 13    		---> user button
-PA9 and PA10 	---> USART1
 ******************************************************************************/
 #include "main.h"
 
