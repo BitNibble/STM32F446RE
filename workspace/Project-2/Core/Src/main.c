@@ -38,7 +38,7 @@ tim1()->callback->cc1 = cc1_callback;
 gpioc()->clock(1);
 PC = EXPLODE_enable();
 
-dev()->tim1->PSC = 200;
+dev()->tim1->PSC = 30;
 dev()->tim1->ARR = 65535;
 dev()->tim1->CCR1 = 32767;
 tim1()->start();
