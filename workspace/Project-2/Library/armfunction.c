@@ -33,7 +33,6 @@ Comment:
 static FUNC_Handler func_setup;
 static ARM_FUNC arm_func_setup;
 
-
 static char FUNCstr[FUNCSTRSIZE] = {0};
 const uint32_t funcstrsize = FUNCSTRSIZE - 1;
 static uint32_t mem[4];
@@ -112,6 +111,7 @@ FUNC_Handler FUNC_enable( void )
 {
 	FUNC_var();
 	/*** TOP ***/
+	//static FUNC_Handler func_setup = {
 	func_setup.power = function_power;
 	func_setup.divide = function_divide;
 	func_setup.realnumber = function_realnumber;
@@ -161,6 +161,7 @@ FUNC_Handler FUNC_enable( void )
 	func_setup.value = function_read_value;
 	// 11
 	func_setup.arm = arm_func_inic();
+	//};
 
 	return func_setup;
 }
@@ -221,7 +222,7 @@ unsigned int function_power(unsigned int base, unsigned int power) {
 }
 // Function to handle division and return a Real structure
 RealNum_TypeDef function_divide(int numerator, int denominator) {
-    RealNum_TypeDef result = {0, 1, 0, 0, 1, 0.0, 0.0, 0}; // Default result
+    RealNum_TypeDef result = {0, 1, 0, 0, 1, 0.0, 0.0,0}; // Default result
 
     // Handle case for division by zero
     if (denominator == 0) {

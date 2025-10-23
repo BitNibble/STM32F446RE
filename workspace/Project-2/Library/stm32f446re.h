@@ -89,7 +89,7 @@ typedef struct {
     CoreDebug_Type* const coredebug;
 } STM32F446RE_CORE_Handler;
 
-typedef struct {
+typedef const struct {
     STM32F446RE_CORE_Handler* core;
 
     ADC_TypeDef* const adc1;

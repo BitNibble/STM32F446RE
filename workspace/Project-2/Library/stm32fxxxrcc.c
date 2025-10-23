@@ -16,7 +16,7 @@ uint8_t STM32FXXX_Rcc_PLL_Select(uint8_t hclock);
 
 /*******   0 -> HSI    1->HSE   *********/
 #ifndef H_Clock_Source
-	#define H_Clock_Source 0
+	#define H_Clock_Source 1
 #endif
 /****************************************/
 /****   PLL ON -> 1    PLL OFF = 0   ****/
