@@ -17,8 +17,13 @@ PC 13    		---> user button
 #include "stm32fxxxtim1and8.h"
 #include "explode.h"
 
+
+uint32_t up_down = 1;
+
+uint32_t diff(uint32_t x, uint32_t y){ return x - y;}
+
 void cc1_callback(void){
-	dev()->gpioa->ODR ^= (1 << 5);
+		dev()->gpioa->ODR ^= (1 << 5);
 }
 EXPLODE_Handler PC;
 
@@ -35,9 +40,9 @@ tim1()->callback->cc1 = cc1_callback;
 gpioc()->clock(1);
 PC = EXPLODE_enable();
 
-dev()->tim1->PSC = 30;
+dev()->tim1->PSC = 50;
 dev()->tim1->ARR = 65535;
-dev()->tim1->CCR1 = 32767;
+dev()->tim1->CCR1 = 1000;
 tim1()->start();
 
 while(1)
