@@ -176,6 +176,6 @@ STM32FXXX_TIM8_Handler* tim8(void){ return (STM32FXXX_TIM8_Handler*) &stm32fxxx_
 	- Precedence Scope
 3º Pointer and Variable
 4º Casting
-Instance->Reg->Par
+Instance->Var->Par
 ******/
 
