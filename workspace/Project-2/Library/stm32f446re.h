@@ -189,6 +189,10 @@ typedef const struct {
 
 STM32F446RE_Handler* dev(void);
 
+/* trackers */
+typedef struct { uint8_t sequence[16]; uint8_t length; uint8_t index; } ADC_RegularTracker;
+typedef struct { uint8_t sequence[4];  uint8_t length; uint8_t index; } ADC_InjectTracker;
+
 /*******************************************************************/
 /************************** CLOCK GETTERS **************************/
 /*******************************************************************/
@@ -218,6 +222,9 @@ void set_hpins(GPIO_TypeDef* reg, uint16_t hpins);
 void clear_hpins(GPIO_TypeDef* reg, uint16_t hpins);
 void set_pin(GPIO_TypeDef* reg, uint8_t pin);
 void clear_pin(GPIO_TypeDef* reg, uint8_t pin);
+
+void adc_set_regular_auto(ADC_TypeDef *adc, ADC_RegularTracker *tracker, uint8_t count, ...);
+void adc_set_injected_auto(ADC_TypeDef *adc, ADC_InjectTracker *tracker, uint8_t count, ...);
 
 void Usart_WordLength(USART_TypeDef* usart, uint8_t wordlength);
 void Usart_StopBits(USART_TypeDef* usart, double stopbits);

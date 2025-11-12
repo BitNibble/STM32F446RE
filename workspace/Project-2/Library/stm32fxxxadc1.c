@@ -12,8 +12,17 @@ Comment:
 #include "stm32fxxxnvic.h"
 
 /*** Define and Macro ***/
-#define ADC_STAB_DELAY 15 // 15
-#define END_OF_CONVERSION_TIME_OUT 100
+#define ADC_EOC_TIMEOUT    100U
+#define ADC_JEOC_TIMEOUT   100U
+#define ADC_STAB_DELAY     15U
+
+/* trackers */
+ADC_RegularTracker ADC1_RegularTracker = { .length = 0, .index = 0 };
+ADC_InjectTracker ADC1_InjectTracker = { .length = 0, .index = 0 };
+
+/* channel result vectors (you already declared these) */
+static volatile uint16_t ADC1_Regular_Channel[19];
+static volatile uint16_t ADC1_Injected_Channel[19];
 
 /*** File Procedure & Function Header ***/
 /*** ADC1 ***/
@@ -26,39 +35,99 @@ void ADC1_Clock(uint8_t state)
 void ADC1_Nvic(uint8_t state) {
 	if(state){ set_bit_block(NVIC->ISER, 1, ADC_IRQn, 1); } else{ set_bit_block(NVIC->ICER, 1, ADC_IRQn, 1); }
 }
+
+/* helpers for tracking & stepping regular sequence */
+static inline uint8_t adc_get_current_channel(ADC_RegularTracker *tracker)
+{
+    if (tracker->length == 0) return 0xFF;
+    return tracker->sequence[tracker->index];
+}
+static inline void adc_next_channel(ADC_RegularTracker *tracker)
+{
+    if (tracker->length == 0) return;
+    tracker->index++;
+    if (tracker->index >= tracker->length) tracker->index = 0;
+}
+
+/* injected trackers */
+static inline uint8_t adc_get_current_injected_channel(ADC_InjectTracker *tracker)
+{
+    if (tracker->length == 0) return 0xFF;
+    return tracker->sequence[tracker->index];
+}
+static inline void adc_next_injected_channel(ADC_InjectTracker *tracker)
+{
+    if (tracker->length == 0) return;
+    tracker->index++;
+    if (tracker->index >= tracker->length) tracker->index = 0;
+}
+
+/* --- update helpers to store results into your indexed vectors --- */
+/* call these from ISR or after checking EOC/JEOC flags */
+static inline void adc_update_regular_result(ADC_TypeDef *adc, ADC_RegularTracker *tracker)
+{
+    uint8_t ch = adc_get_current_channel(tracker);
+    if (ch <= 18) {
+        ADC1_Regular_Channel[ch] = (uint16_t)(adc->DR & 0xFFFFU);
+    }
+    adc_next_channel(tracker);
+}
+
+static inline void adc_update_injected_result(ADC_TypeDef *adc, ADC_InjectTracker *tracker, uint8_t jdr_index)
+{
+    uint16_t val = 0;
+    switch (jdr_index) {
+        case 1: val = (uint16_t)(adc->JDR1 & 0xFFFFU); break;
+        case 2: val = (uint16_t)(adc->JDR2 & 0xFFFFU); break;
+        case 3: val = (uint16_t)(adc->JDR3 & 0xFFFFU); break;
+        default: val = (uint16_t)(adc->JDR4 & 0xFFFFU); break;
+    }
+    uint8_t ch = adc_get_current_injected_channel(tracker);
+    if (ch <= 18) ADC1_Injected_Channel[ch] = val;
+    adc_next_injected_channel(tracker);
+}
+
+/* simple start/wait helpers using CMSIS flags */
+static inline void adc_start_conversion(ADC_TypeDef *adc) { adc->CR2 |= ADC_CR2_SWSTART; }
+static inline void adc_wait_eoc(ADC_TypeDef *adc) {
+    for (volatile uint32_t timeout = ADC_EOC_TIMEOUT; !get_reg_Msk(adc->SR, ADC_SR_EOC) && timeout; timeout--);
+    clear_reg(&adc->SR, ADC_SR_EOC);
+}
+static inline void adc_start_injected(ADC_TypeDef *adc) { adc->CR2 |= ADC_CR2_JSWSTART; }
+static inline void adc_wait_jeoc(ADC_TypeDef *adc) {
+    for (volatile uint32_t timeout = ADC_JEOC_TIMEOUT; !get_reg_Msk(adc->SR, ADC_SR_JEOC) && timeout; timeout--);
+    clear_reg(&adc->SR, ADC_SR_JEOC);
+}
+
 void ADC1_Start_Conversion(void) {
-	set_reg_Msk(&ADC1->CR2, ADC_CR2_SWSTART, 1);
+	adc_start_conversion(ADC1);
 }
+
 void ADC1_Wait_End_Of_Conversion(void) {
-	for (volatile uint32_t time_out = END_OF_CONVERSION_TIME_OUT; !get_reg_Msk(ADC1->SR, ADC_SR_EOC) && time_out; time_out-- );
+	adc_wait_eoc(ADC1);
 }
+
 void ADC1_Start(void) {
-	set_reg_Msk(&ADC1->CR2, ADC_CR2_ADON, 1);
-	for(volatile uint8_t countdown = ADC_STAB_DELAY; countdown; countdown--); // Stabilization delay
+    set_reg_Msk(&ADC1->CR2, ADC_CR2_ADON, 1);
+    for (volatile uint8_t i = ADC_STAB_DELAY; i; i--);  // stabilization wait
 }
+
 void ADC1_Stop(void) {
-	set_reg_Msk(&ADC1->CR2, ADC_CR2_ADON, 0);
+    clear_reg(&ADC1->CR2, ADC_CR2_ADON);
 }
+
 void ADC1_Temperature_Setup(void) {
-    // Enable ADC1 clock
     ADC1_Clock(1);
-
-    // Configure ADC1 parameters
-    ADC1->CR1 = 0; // Clear control register
-    set_reg_Msk(&ADC1->SQR1, ADC_SQR1_L, 0);
-    set_reg_Msk(&ADC1->SQR3, ADC_SQR3_SQ1, 18);
-    set_reg_Msk(&ADC1->SMPR1, ADC_SMPR1_SMP18, 3);
-
-    // Enable temperature sensor
-    set_reg_Msk(&ADC->CCR, ADC_CCR_TSVREFE, 1);
+    ADC1->CR1 = 0;
+    adc_set_regular_auto(ADC1, &ADC1_RegularTracker, 1, 16);
     ADC1_Start();
 }
+
 uint16_t ADC1_Read_Temperature(void) {
-	uint16_t adc_value;
-	ADC1_Start_Conversion();
-	ADC1_Wait_End_Of_Conversion();
-    adc_value = ADC1->DR;
-    return adc_value;
+	adc_start_conversion(ADC1);
+	adc_wait_eoc(ADC1);
+    ADC1_Regular_Channel[16] = (uint16_t)(ADC1->DR & 0xFFFFU);
+    return ADC1_Regular_Channel[16];
 }
 
 /*** ADC1 ***/
