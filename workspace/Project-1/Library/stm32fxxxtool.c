@@ -3,7 +3,7 @@
 Author:   <sergio.salazar.santos@gmail.com>
 License:  GNU General Public License
 Hardware: STM32FXXX
-Update:   21/10/2025
+Update:   15/11/2025
 *****************************************/
 #include "stm32fxxxtool.h"
 #include <stdarg.h>
@@ -19,10 +19,12 @@ uint32_t _var_imask(uint32_t var, uint32_t Msk);
 uint32_t _size_to_block(uint32_t size_block);
 uint32_t _block_to_size(uint32_t block);
 uint32_t _get_mask(uint32_t size_block, uint32_t Pos);
-uint32_t _get_pos(uint32_t size_block, uint32_t block_n);
 uint32_t _mask_pos(uint32_t Msk);
 uint32_t _mask_data(uint32_t Msk, uint32_t data);
 /*** SUB Tools ***/
+inline uint32_t _get_pos(uint32_t size_block, uint32_t block_n){
+	return size_block * block_n;
+}
 inline uint32_t _var_mask(uint32_t var, uint32_t Msk){
 	return (var & Msk);
 }
@@ -30,16 +32,13 @@ inline uint32_t _var_imask(uint32_t var, uint32_t Msk){
 	return (var & ~Msk);
 }
 inline uint32_t _size_to_block(uint32_t size_block){
-	return (size_block > 31) ? 0xFFFFFFFFU : ((1U << size_block) - 1);
+	return (size_block >= DWORD_BITS) ? 0xFFFFFFFFU : ((1U << size_block) - 1);
 }
 inline uint32_t _block_to_size(uint32_t block) {
-    return block ? (32U - __builtin_clz(block)) : 0U;
+    return block ? ((unsigned int)DWORD_BITS - __builtin_clz(block)) : 0U;
 }
 inline uint32_t _get_mask(uint32_t size_block, uint32_t Pos){
 	return _size_to_block(size_block) << Pos;
-}
-inline uint32_t _get_pos(uint32_t size_block, uint32_t block_n){
-	return size_block * block_n;
 }
 inline uint32_t _mask_pos(uint32_t Msk){
 	return Msk ? (unsigned int)__builtin_ctz(Msk) : 0U;
@@ -48,11 +47,11 @@ inline uint32_t _mask_data(uint32_t Msk, uint32_t data){
 	return _var_mask(data << _mask_pos(Msk), Msk);
 }
 // --- Generic helpers ---
-inline uint32_t _reg_get(uint32_t reg, uint32_t Msk){
+inline uint32_t reg_get(uint32_t reg, uint32_t Msk){
     return _var_mask(reg, Msk) >> _mask_pos(Msk);
 }
 
-inline void _reg_set(volatile uint32_t *reg, uint32_t Msk, uint32_t data){
+inline void reg_set(volatile uint32_t *reg, uint32_t Msk, uint32_t data){
 	*reg = _var_imask(*reg, Msk) | _mask_data(Msk, data);
 }
 /*** Tools ***/

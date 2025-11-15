@@ -3,7 +3,7 @@
 Author:   <sergio.salazar.santos@gmail.com>
 License:  GNU General Public License
 Hardware: STM32FXXX
-Update:   21/10/2025
+Update:   15/11/2025
 ****************************************************/
 #pragma once
 
@@ -24,6 +24,7 @@ Update:   21/10/2025
 /*******************************************************************/
 /****************************** Tools ******************************/
 /*******************************************************************/
+uint32_t _get_pos(uint32_t size_block, uint32_t block_n);
 void set_reg(volatile uint32_t* reg, uint32_t hbits);
 void clear_reg(volatile uint32_t* reg, uint32_t hbits);
 uint32_t get_reg_Msk_Pos(uint32_t reg, uint32_t Msk, uint32_t Pos);
@@ -38,8 +39,8 @@ void set_reg_block(volatile uint32_t* reg, uint8_t size_block, uint8_t Pos, uint
 uint32_t get_bit_block(volatile uint32_t* reg, uint8_t size_block, uint8_t Pos);
 void set_bit_block(volatile uint32_t* reg, uint8_t size_block, uint8_t Pos, uint32_t data);
 // --- Generic helpers ---
-uint32_t _reg_get(uint32_t reg, uint32_t mask);
-void _reg_set(volatile uint32_t *reg, uint32_t mask, uint32_t data);
+uint32_t reg_get(uint32_t reg, uint32_t mask);
+void reg_set(volatile uint32_t *reg, uint32_t mask, uint32_t data);
 /****************************************/
 /*** NULL Check ***/
 int isPtrNull(void* ptr);
