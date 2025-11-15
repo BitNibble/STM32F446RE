@@ -1,10 +1,10 @@
 /* USER CODE BEGIN CODE */
 /*****************************************************************************
-Author: <sergio.salazar.santos@gmail.com>
-License: GNU General Public License
-File: MAIN 21/10/2025
+Author:   <sergio.salazar.santos@gmail.com>
+License:  GNU General Public License
 Software: STM32CubeIDE Version: 1.14.0 Build: 19471_20231121_1200 (UTC)
 Hardware: Nucleo-F446RE
+Date: 28022024
 	Comment:
 PA 5     		---> Led indicator
 PC 13    		---> user button

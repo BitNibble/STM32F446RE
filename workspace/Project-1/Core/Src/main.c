@@ -1,9 +1,9 @@
 /*****************************************************************************
-Author: <sergio.salazar.santos@gmail.com>
-License: GNU General Public License
-File: MAIN 12/01/2024
+Author:   <sergio.salazar.santos@gmail.com>
+License:  GNU General Public License
 Software: STM32CubeIDE Version: 1.14.0 Build: 19471_20231121_1200 (UTC)
 Hardware: Nucleo-F446RE
+Date: 28022024
 	Comment:
 PC 0,1,2 		---> 74HC595
 PB 0...7 		---> LCD 4x20
