@@ -87,10 +87,10 @@ typedef struct {
     MPU_Type* const mpu;
     FPU_Type* const fpu;
     CoreDebug_Type* const coredebug;
-} STM32F446RE_CORE_Handler;
+} STM32F446RE_CORE_Instance;
 
 typedef const struct {
-    STM32F446RE_CORE_Handler* core;
+    STM32F446RE_CORE_Instance* core;
 
     ADC_TypeDef* const adc1;
     ADC_TypeDef* const adc2;
@@ -185,13 +185,9 @@ typedef const struct {
     USB_OTG_HostTypeDef* const usb_otg_host;
     USB_OTG_HostChannelTypeDef* const usb_otg_hostchannel;
 
-} STM32F446RE_Handler;
+} STM32F446RE_Instance;
 
-STM32F446RE_Handler* dev(void);
-
-/* trackers */
-typedef struct { uint8_t sequence[16]; uint8_t length; uint8_t index; } ADC_RegularTracker;
-typedef struct { uint8_t sequence[4];  uint8_t length; uint8_t index; } ADC_InjectTracker;
+STM32F446RE_Instance* dev(void);
 
 /*******************************************************************/
 /************************** CLOCK GETTERS **************************/
@@ -216,8 +212,12 @@ uint32_t get_pclk1(void);
 uint32_t get_pclk2(void);
 
 /*******************************************************************/
-/************************** GPIO & USART ***************************/
+/************************* Peripheral ******************************/
 /*******************************************************************/
+/* trackers */
+typedef struct { uint8_t sequence[16]; uint8_t length; uint8_t index; } ADC_RegularTracker;
+typedef struct { uint8_t sequence[4];  uint8_t length; uint8_t index; } ADC_InjectTracker;
+
 void set_hpins(GPIO_TypeDef* reg, uint16_t hpins);
 void clear_hpins(GPIO_TypeDef* reg, uint16_t hpins);
 void set_pin(GPIO_TypeDef* reg, uint8_t pin);
