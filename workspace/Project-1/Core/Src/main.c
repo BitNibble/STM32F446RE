@@ -42,7 +42,7 @@ PA9 and PA10 	---> USART1
 static EXPLODE PINA;
 static EXPLODE PINB;
 static EXPLODE PINC;
-static HC595 hc;
+static HC595_Handler hc;
 static ARMLCD0 lcd;
 static circbuff circ1;
 static circbuff circ2;
@@ -125,7 +125,7 @@ count1 = 0;
 count2 = 0;
 dir = 0;
 
-hc = HC595_enable(&dev()->gpioc->MODER, &dev()->gpioc->ODR, 2, 1, 0);
+hc = hc595_enable(&dev()->gpioc->MODER, &dev()->gpioc->ODR, 2, 1, 0);
 lcd = ARMLCD0_enable(dev()->gpiob);
 
 
